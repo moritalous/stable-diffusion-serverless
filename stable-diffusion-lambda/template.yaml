@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  python3.9
+
+  Sample SAM Template for stable-diffusion-lambda
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 900
+    MemorySize: 10240
+    Tracing: Active
+
+Resources:
+  StableDiffusionFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      PackageType: Image
+      Architectures:
+        - x86_64
+      FunctionUrlConfig:
+        AuthType: NONE
+      Environment:
+        Variables:
+          WIDTH: 512
+          HEIGHT: 512
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./stable-diffusion-function
+      DockerTag: python3.9-v1
+
+Outputs:
+  StableDiffusionFunctionUrlEndpoint:
+      Description: "StableDiffusionFunction URL Endpoint"
+      Value:
+        Fn::GetAtt: StableDiffusionFunctionUrl.FunctionUrl
