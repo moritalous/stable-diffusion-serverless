@@ -7,10 +7,14 @@ from diffusers import StableDiffusionPipeline
 pipe = StableDiffusionPipeline.from_pretrained('/model')
 pipe = pipe.to('cpu')
 
+
 def lambda_handler(event, context):
 
-    width = int(os.environ['WIDTH'])
-    height = int(os.environ['HEIGHT'])
+    width = int(os.getenv('WIDTH', '512'))
+    height = int(os.getenv('HEIGHT', '512'))
+    num_inference_steps = int(os.getenv('NUM_INFERENCE_STEPS', '50'))
+    guidance_scale = float(os.getenv('GUIDANCE_SCALE', '7.5'))
+    eta = float(os.getenv('ETA', '0.0'))
 
     try:
         os.remove('/tmp/image.png')
@@ -21,7 +25,14 @@ def lambda_handler(event, context):
     prompt = body['prompt']
     print(prompt)
 
-    image = pipe(prompt, width=width, height=height, guidance_scale=7.5).images[0]
+    image = pipe(prompt,
+                 width=width,
+                 height=height,
+                 num_inference_steps=num_inference_steps,
+                 guidance_scale=guidance_scale,
+                 eta=eta
+                 ).images[0]
+
     image.save('/tmp/image.png')
 
     with open('/tmp/image.png', 'rb') as f:
@@ -29,7 +40,7 @@ def lambda_handler(event, context):
 
     return {
         "statusCode": 200,
-        "headers": { "Content-Type": "image/png" },
+        "headers": {"Content-Type": "image/png"},
         "body": base64_img,
         "isBase64Encoded": True
     }

@@ -25,6 +25,9 @@ Resources:
         Variables:
           WIDTH: 512
           HEIGHT: 512
+          NUM_INFERENCE_STEPS: 50
+          GUIDANCE_SCALE: 7.5
+          ETA: 0.0
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: ./stable-diffusion-function
