@@ -49,24 +49,24 @@ def process_request(respond, body):
 
 def process_request2(respond, body):
 
-    prompt = body["text"]
+    prompt_ja = body["text"]
     channel_id = body['channel_id']
 
     import boto3
     translate = boto3.client(service_name='translate', region_name='ap-northeast-1', use_ssl=True)
-    result = translate.translate_text(Text=prompt, 
+    result = translate.translate_text(Text=prompt_ja, 
                 SourceLanguageCode="ja", TargetLanguageCode="en")
     
-    prompt = result.get('TranslatedText')
+    prompt_en = result.get('TranslatedText')
 
     result = app.client.files_upload(
         channels=channel_id,
-        initial_comment=prompt,
-        file=generate_image(prompt),
+        initial_comment=f'{prompt_ja}, {prompt_en}',
+        file=generate_image(prompt_en),
     )
     print(result)
 
-    respond(f"Completed! (task: {prompt})")
+    respond(f"Completed! (task: {prompt_ja})")
 
 app.command(command)(ack=respond_to_slack_within_3_seconds,
                      lazy=[process_request])

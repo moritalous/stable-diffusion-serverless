@@ -1,8 +1,12 @@
 FROM public.ecr.aws/lambda/python:3.9
 
-RUN python3.9 -m pip install --no-cache-dir diffusers transformers scipy && \
-    python3.9 -m pip install --no-cache-dir torch --extra-index-url https://download.pytorch.org/whl/cpu && \
-    python3.9 -m pip install --no-cache-dir slack_bolt
+RUN python3.9 -m pip install --no-cache-dir \
+        diffusers[torch] \
+        transformers \
+        scipy \
+        accelerate \
+        torch --extra-index-url https://download.pytorch.org/whl/cpu \
+        slack_bolt
 
 RUN yum install -y \
         mesa-libGL-devel \
